@@ -78,14 +78,14 @@ st.markdown("""
 # Connect to the database
 try:
     def get_connection():
-        conn = mysql.connector.connect(
+        credential = mysql.connector.connect(
             host=st.secrets["host"],
             user=st.secrets["user"],
             password=st.secrets["password"],
             database=st.secrets["name"],
             port=st.secrets.get("port", 4000),
         )
-        return conn
+        return credential
 
     def run_query(sql, params=None):
         conn = None
@@ -152,9 +152,10 @@ except Exception as e:
     st.info("🔧 Please ensure 'Asteroid_Data.db' is in the same directory as this script.")
 
 # Helper function to run and display SQL queries with enhanced visualization
+a = run_query()
 def show_query(query, show_chart=True):
     try:
-        df = pd.read_sql_query(query, run_query)
+        df = pd.read_sql_query(query, a)
         
         # Display dataframe with enhanced styling
         st.dataframe(df, use_container_width=True, height=400)
