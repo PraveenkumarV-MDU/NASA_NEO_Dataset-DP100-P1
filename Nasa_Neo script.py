@@ -474,8 +474,8 @@ st.markdown("""
 - Ensure your `Asteroid_Data.db` file is in the same directory
 - The dashboard works best with a stable internet connection
 - Use the interactive filters to explore different aspects of asteroid data
-""")
+""")"""
 
 # Close database connection
 if 'conn' in locals():
-    conn.close()"""
+    conn.close()
