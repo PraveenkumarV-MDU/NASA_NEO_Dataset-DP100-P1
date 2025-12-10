@@ -1,3 +1,4 @@
+
 import streamlit as st
 import mysql.connector
 import pandas as pd
@@ -11,75 +12,234 @@ import plotly.graph_objects as go
 st.set_page_config(
     page_title="NASA NEO Tracker",
     page_icon="🚀",
-    layout='wide',
-    initial_sidebar_state="expanded"
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 # ----------------------------
-# 2. Custom CSS
+# 2. Modern Custom CSS
 # ----------------------------
-st.markdown("""
-<style>
-    .main-header {
-        background: linear-gradient(90deg, #1e3c72, #2a5298);
-        padding: 2rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-        color: white;
-        text-align: center;
+st.markdown(
+    """
+    <style>
+    /* Global background + typography */
+    .main {
+        background: radial-gradient(circle at top left, #0f172a 0, #020617 45%, #000000 100%);
+        color: #e5e7eb;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    
-    .metric-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 1rem;
-        border-radius: 10px;
-        margin: 0.5rem 0;
-        color: white;
-        text-align: center;
+
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 3rem;
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
     }
-    
-    .query-section {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 10px;
-        border-left: 5px solid #4CAF50;
-        margin: 1rem 0;
+
+    /* Sidebar styling */
+    section[data-testid="stSidebar"] {
+        background: rgba(15, 23, 42, 0.94);
+        backdrop-filter: blur(18px);
+        border-right: 1px solid rgba(148, 163, 184, 0.25);
+        color: #e5e7eb;
     }
-    
-    .filter-section {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin: 1rem 0;
+    section[data-testid="stSidebar"] .sidebar-content {
+        padding-top: 1.2rem;
     }
-    
-    .stSelectbox > div > div {
-        background-color: #e3f2fd;
-        border-radius: 5px;
+
+    .sidebar-header {
+        padding-bottom: 0.5rem;
     }
-    
-    .sidebar .sidebar-content {
-        background: linear-gradient(180deg, #2c3e50, #34495e);
+    .sidebar-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: .03em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
     }
-    
-    .stDataFrame {
-        border-radius: 10px;
+    .sidebar-subtitle {
+        font-size: 0.78rem;
+        opacity: 0.75;
+        margin-bottom: 0.8rem;
+    }
+    .sidebar-category-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        opacity: 0.75;
+        margin-top: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    /* Expander tweaks */
+    details > summary {
+        font-weight: 600;
+        letter-spacing: .04em;
+    }
+
+    /* Hero banner */
+    .hero-card {
+        margin-top: 0.5rem;
+        border-radius: 1.75rem;
+        padding: 1.6rem 2.1rem;
+        background: radial-gradient(circle at top left, #0ea5e9 0, #1d4ed8 40%, #020617 100%);
+        box-shadow:
+            0 22px 45px rgba(15, 23, 42, 0.9),
+            0 0 0 1px rgba(148, 163, 184, 0.25);
+        position: relative;
         overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        color: #f9fafb;
     }
-</style>
-""", unsafe_allow_html=True)
+    .hero-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(circle at 10% 0%, rgba(248, 250, 252, 0.18) 0, transparent 40%),
+            radial-gradient(circle at 90% 100%, rgba(52, 211, 153, 0.16) 0, transparent 55%);
+        opacity: 0.85;
+        pointer-events: none;
+    }
+    .hero-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+    .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 999px;
+        padding: 0.18rem 0.7rem;
+        font-size: 0.75rem;
+        background: rgba(15, 23, 42, 0.35);
+        border: 1px solid rgba(226, 232, 240, 0.25);
+        width: fit-content;
+    }
+    .hero-title {
+        font-size: clamp(1.8rem, 2.1vw, 2.3rem);
+        font-weight: 800;
+        letter-spacing: .04em;
+    }
+    .hero-subtitle {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        max-width: 720px;
+    }
+
+    /* Metric cards */
+    .metric-row {
+        margin-top: 1.3rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    @media (max-width: 1200px) {
+        .metric-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    @media (max-width: 768px) {
+        .metric-row {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    .metric-card {
+        border-radius: 1.35rem;
+        padding: 1.1rem 1.2rem;
+        background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9) 0, rgba(15, 23, 42, 0.65) 40%, rgba(15, 23, 42, 0.9) 100%);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+        position: relative;
+        overflow: hidden;
+        transition: transform 150ms ease-out, box-shadow 150ms ease-out, border-color 150ms ease-out;
+    }
+    .metric-card:hover {
+        transform: translateY(-3px) translateZ(0);
+        box-shadow: 0 24px 50px rgba(15, 23, 42, 0.95);
+        border-color: rgba(96, 165, 250, 0.85);
+    }
+    .metric-label {
+        font-size: 0.78rem;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-bottom: 0.3rem;
+    }
+    .metric-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+    .metric-tag {
+        margin-top: 0.4rem;
+        font-size: 0.78rem;
+        opacity: 0.8;
+    }
+
+    /* Section headings */
+    .section-heading {
+        margin-top: 2rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+    .section-heading span.icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0, #22d3ee 0, #1d4ed8 40%, #020617 100%);
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+        font-size: 0.9rem;
+    }
+    .section-heading-sub {
+        font-size: 0.82rem;
+        opacity: 0.7;
+        margin-bottom: 0.7rem;
+    }
+
+    /* Tables */
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.85);
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 # ----------------------------
-# 3. Header
+# 3. Header (hero card)
 # ----------------------------
-st.markdown("""
-<div class="main-header">
-    <h1>🌌 NASA NEO Tracking & Insights Dashboard</h1>
-    <h3>🛰️ Advanced Space Object Monitoring & Analysis</h3>
-    <p>Explore 2024 asteroid data, approach speeds, distances, and hazard insights using SQL-powered queries</p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div class="hero-card">
+      <div class="hero-inner">
+        <div class="hero-pill">🪐 2024 Near-Earth Objects · SQL-powered analytics</div>
+        <div class="hero-title">NASA NEO Tracking & Insights Dashboard</div>
+        <div class="hero-subtitle">
+          Advanced monitoring of near-Earth objects with query-driven views on approach counts,
+          relative velocities, miss distances, and hazard potential.
+        </div>
+      </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # ----------------------------
 # 4. DB helpers
@@ -93,8 +253,9 @@ def get_connection():
         user=st.secrets["user"],
         password=st.secrets["password"],
         database=st.secrets["name"],
-        port=st.secrets.get("port", 4000),  # default port; override in st.secrets if needed
+        port=st.secrets.get("port", 4000),
     )
+
 
 def run_query(sql, params=None):
     """
@@ -127,49 +288,62 @@ try:
         "SELECT COUNT(*) AS count FROM asteroids WHERE is_potentially_hazardous_asteroid = 1"
     )
 
-    total_asteroids = int(total_asteroids_df.iloc[0]["count"]) if not total_asteroids_df.empty else 0
-    total_approaches = int(total_approaches_df.iloc[0]["count"]) if not total_approaches_df.empty else 0
-    hazardous_count = int(hazardous_count_df.iloc[0]["count"]) if not hazardous_count_df.empty else 0
+    total_asteroids = (
+        int(total_asteroids_df.iloc[0]["count"])
+        if not total_asteroids_df.empty
+        else 0
+    )
+    total_approaches = (
+        int(total_approaches_df.iloc[0]["count"])
+        if not total_approaches_df.empty
+        else 0
+    )
+    hazardous_count = (
+        int(hazardous_count_df.iloc[0]["count"])
+        if not hazardous_count_df.empty
+        else 0
+    )
 
 except Exception as e:
     st.error(f"⚠️ Database connection failed: {e}")
     st.info("🔧 Please check your MySQL connection settings in st.secrets.")
     total_asteroids = total_approaches = hazardous_count = 0
 
-col1, col2, col3, col4 = st.columns(4)
+hazard_percentage = (
+    (hazardous_count / total_asteroids * 100) if total_asteroids > 0 else 0
+)
 
-with col1:
-    st.markdown(f"""
-    <div class="metric-container">
-        <h2>🌑 {total_asteroids:,}</h2>
-        <p>Total Asteroids Tracked</p>
-    </div>
-    """, unsafe_allow_html=True)
+# Modern metric cards
+st.markdown(
+    f"""
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Total Objects Tracked</div>
+        <div class="metric-value">🪐 {total_asteroids:,}</div>
+        <div class="metric-tag">Unique asteroids observed in 2024</div>
+      </div>
 
-with col2:
-    st.markdown(f"""
-    <div class="metric-container">
-        <h2>🚀 {total_approaches:,}</h2>
-        <p>Close Approaches Recorded</p>
-    </div>
-    """, unsafe_allow_html=True)
+      <div class="metric-card">
+        <div class="metric-label">Close Approaches Recorded</div>
+        <div class="metric-value">🚀 {total_approaches:,}</div>
+        <div class="metric-tag">Earth-approaching events in dataset</div>
+      </div>
 
-with col3:
-    st.markdown(f"""
-    <div class="metric-container">
-        <h2>⚠️ {hazardous_count:,}</h2>
-        <p>Potentially Hazardous</p>
-    </div>
-    """, unsafe_allow_html=True)
+      <div class="metric-card">
+        <div class="metric-label">Potentially Hazardous</div>
+        <div class="metric-value">⚠️ {hazardous_count:,}</div>
+        <div class="metric-tag">Objects flagged as PHAs</div>
+      </div>
 
-with col4:
-    hazard_percentage = (hazardous_count / total_asteroids * 100) if total_asteroids > 0 else 0
-    st.markdown(f"""
-    <div class="metric-container">
-        <h2>📊 {hazard_percentage:.1f}%</h2>
-        <p>Hazard Rate</p>
+      <div class="metric-card">
+        <div class="metric-label">Hazard Rate</div>
+        <div class="metric-value">📊 {hazard_percentage:.1f}%</div>
+        <div class="metric-tag">Share of tracked objects exceeding risk threshold</div>
+      </div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
 
 # ----------------------------
 # 6. Helper to run + show queries
@@ -189,21 +363,24 @@ def show_query(sql, show_chart=True):
         st.dataframe(df, use_container_width=True, height=400)
 
         if show_chart and len(df) > 0:
-            if len(df.columns) == 2 and df.columns[1] in ['count', 'approach_count', 'total']:
+            if (
+                len(df.columns) == 2
+                and df.columns[1] in ["count", "approach_count", "total"]
+            ):
                 fig = px.bar(
                     df.head(10),
                     x=df.columns[0],
                     y=df.columns[1],
-                    title=f"Top 10 - {df.columns[1].replace('_', ' ').title()}"
+                    title=f"Top 10 - {df.columns[1].replace('_', ' ').title()}",
                 )
                 fig.update_layout(height=400)
                 st.plotly_chart(fig, use_container_width=True)
 
-            elif len(df.columns) > 1 and 'velocity' in df.columns[1].lower():
+            elif len(df.columns) > 1 and "velocity" in df.columns[1].lower():
                 fig = px.histogram(
                     df,
                     x=df.columns[1],
-                    title=f"Distribution of {df.columns[1].replace('_', ' ').title()}"
+                    title=f"Distribution of {df.columns[1].replace('_', ' ').title()}",
                 )
                 fig.update_layout(height=400)
                 st.plotly_chart(fig, use_container_width=True)
@@ -218,67 +395,58 @@ def show_query(sql, show_chart=True):
 # 7. Query definitions
 # ----------------------------
 queries = {
-    "1. Count asteroid approaches": '''
+    "1. Count asteroid approaches": """
         SELECT neo_reference_id, COUNT(*) AS approach_count
         FROM close_approach
         GROUP BY neo_reference_id
         ORDER BY approach_count DESC
-    ''',
-
-    "2. Average velocity per asteroid": '''
+    """,
+    "2. Average velocity per asteroid": """
         SELECT neo_reference_id, AVG(relative_velocity_km_per_hour) AS avg_velocity
         FROM close_approach
         GROUP BY neo_reference_id
         ORDER BY avg_velocity DESC
-    ''',
-
-    "3. Top 10 fastest asteroids": '''
+    """,
+    "3. Top 10 fastest asteroids": """
         SELECT neo_reference_id, MAX(relative_velocity_km_per_hour) AS max_velocity
         FROM close_approach
         GROUP BY neo_reference_id
         ORDER BY max_velocity DESC
         LIMIT 10
-    ''',
-
-    "4. Hazardous asteroids > 3 approaches": '''
+    """,
+    "4. Hazardous asteroids > 3 approaches": """
         SELECT ca.neo_reference_id, COUNT(*) AS approach_count
         FROM close_approach ca
         JOIN asteroids a ON ca.neo_reference_id = a.id
         WHERE a.is_potentially_hazardous_asteroid = 1
         GROUP BY ca.neo_reference_id
         HAVING COUNT(*) > 3
-    ''',
-
-    #MySQL-friendly month extraction
-    "5. Month with most approaches": '''
+    """,
+    "5. Month with most approaches": """
         SELECT DATE_FORMAT(close_approach_date, '%Y-%m') AS month, COUNT(*) AS count
         FROM close_approach
         GROUP BY month
         ORDER BY count DESC
         LIMIT 1
-    ''',
-
-    "6. Fastest ever approach": '''
+    """,
+    "6. Fastest ever approach": """
         SELECT neo_reference_id, MAX(relative_velocity_km_per_hour) AS fastest_speed
         FROM close_approach
         GROUP BY neo_reference_id
         ORDER BY fastest_speed DESC
         LIMIT 1
-    ''',
-
-    "7. Sort by max estimated diameter": '''
+    """,
+    "7. Sort by max estimated diameter": """
         SELECT id, name, estimated_diameter_max_km
         FROM asteroids
         ORDER BY estimated_diameter_max_km DESC
-    ''',
-
-    "8. Closest approach getting nearer over time": '''
+    """,
+    "8. Closest approach getting nearer over time": """
         SELECT *
         FROM close_approach
         ORDER BY neo_reference_id, close_approach_date
-    ''',
-
-    "9. Closest approach date & distance": '''
+    """,
+    "9. Closest approach date & distance": """
         SELECT a.name,
                ca.close_approach_date,
                MIN(ca.miss_distance_km) AS closest_approach
@@ -286,36 +454,31 @@ queries = {
         JOIN asteroids a ON ca.neo_reference_id = a.id
         GROUP BY a.id, a.name, ca.close_approach_date
         ORDER BY closest_approach ASC
-    ''',
-
-    "10. Velocity > 50,000 km/h": '''
+    """,
+    "10. Velocity > 50,000 km/h": """
         SELECT DISTINCT a.name, ca.relative_velocity_km_per_hour
         FROM close_approach ca
         JOIN asteroids a ON ca.neo_reference_id = a.id
         WHERE ca.relative_velocity_km_per_hour > 50000
-    ''',
-
-    "11. Approaches per month": '''
+    """,
+    "11. Approaches per month": """
         SELECT DATE_FORMAT(close_approach_date, '%Y-%m') AS month, COUNT(*) AS total
         FROM close_approach
         GROUP BY month
         ORDER BY total DESC
-    ''',
-
-    "12. Brightest asteroid (lowest magnitude)": '''
+    """,
+    "12. Brightest asteroid (lowest magnitude)": """
         SELECT id, name, absolute_magnitude_h
         FROM asteroids
         ORDER BY absolute_magnitude_h ASC
         LIMIT 1
-    ''',
-
-    "13. Hazardous vs Non-hazardous count": '''
+    """,
+    "13. Hazardous vs Non-hazardous count": """
         SELECT is_potentially_hazardous_asteroid, COUNT(*) AS count
         FROM asteroids
         GROUP BY is_potentially_hazardous_asteroid
-    ''',
-
-    "14. Asteroids < 1 LD": '''
+    """,
+    "14. Asteroids < 1 LD": """
         SELECT a.name,
                ca.close_approach_date,
                ca.miss_distance_lunar
@@ -323,9 +486,8 @@ queries = {
         JOIN asteroids a ON ca.neo_reference_id = a.id
         WHERE ca.miss_distance_lunar < 1
         ORDER BY ca.miss_distance_lunar
-    ''',
-
-    "15. Asteroids < 0.05 AU": '''
+    """,
+    "15. Asteroids < 0.05 AU": """
         SELECT a.name,
                ca.close_approach_date,
                ca.astronomical
@@ -333,25 +495,22 @@ queries = {
         JOIN asteroids a ON ca.neo_reference_id = a.id
         WHERE ca.astronomical < 0.05
         ORDER BY ca.astronomical
-    ''',
-
-    "Bonus 1: Orbiting bodies (non-Earth)": '''
+    """,
+    "Bonus 1: Orbiting bodies (non-Earth)": """
         SELECT orbiting_body, COUNT(*) AS count
         FROM close_approach
         WHERE orbiting_body != 'Earth'
         GROUP BY orbiting_body
         ORDER BY count DESC
-    ''',
-
-    "Bonus 2: Avg miss distance by hazard type": '''
+    """,
+    "Bonus 2: Avg miss distance by hazard type": """
         SELECT a.is_potentially_hazardous_asteroid,
                AVG(ca.miss_distance_km) AS avg_miss_distance
         FROM close_approach ca
         JOIN asteroids a ON ca.neo_reference_id = a.id
         GROUP BY a.is_potentially_hazardous_asteroid
-    ''',
-
-    "Bonus 3: Top 5 closest approaches": '''
+    """,
+    "Bonus 3: Top 5 closest approaches": """
         SELECT a.name,
                ca.close_approach_date,
                ca.miss_distance_km
@@ -359,15 +518,13 @@ queries = {
         JOIN asteroids a ON ca.neo_reference_id = a.id
         ORDER BY ca.miss_distance_km ASC
         LIMIT 5
-    ''',
-
-    "Bonus 4: Count of hazardous asteroids": '''
+    """,
+    "Bonus 4: Count of hazardous asteroids": """
         SELECT COUNT(DISTINCT id) AS hazardous_asteroid_count
         FROM asteroids
         WHERE is_potentially_hazardous_asteroid = 1
-    ''',
-
-    "Bonus 5: Frequent <1 LD asteroids": '''
+    """,
+    "Bonus 5: Frequent <1 LD asteroids": """
         SELECT ca.neo_reference_id,
                a.name,
                COUNT(*) AS close_pass_count
@@ -377,48 +534,57 @@ queries = {
         GROUP BY ca.neo_reference_id, a.name
         HAVING COUNT(*) > 1
         ORDER BY close_pass_count DESC
-    '''
+    """,
 }
 
 # ----------------------------
-# 8. Sidebar – query selection
+# 8. Sidebar – query selection (modern text, same logic)
 # ----------------------------
-st.sidebar.markdown("## 🎯 Query Selection")
-st.sidebar.markdown("Choose from our comprehensive set of asteroid analysis queries:")
+with st.sidebar:
+    st.markdown('<div class="sidebar-header">', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sidebar-title">🛰 Query Selection</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="sidebar-subtitle">Choose from our comprehensive set of asteroid analysis queries.</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 query_categories = {
     "📈 Statistical Analysis": [
         "1. Count asteroid approaches",
         "2. Average velocity per asteroid",
         "3. Top 10 fastest asteroids",
-        "11. Approaches per month"
+        "11. Approaches per month",
     ],
     "⚠️ Hazard Assessment": [
         "4. Hazardous asteroids > 3 approaches",
         "13. Hazardous vs Non-hazardous count",
         "Bonus 4: Count of hazardous asteroids",
-        "Bonus 2: Avg miss distance by hazard type"
+        "Bonus 2: Avg miss distance by hazard type",
     ],
     "🏃‍♂️ Speed & Motion": [
         "6. Fastest ever approach",
-        "10. Velocity > 50,000 km/h"
+        "10. Velocity > 50,000 km/h",
     ],
     "📏 Distance & Size": [
         "7. Sort by max estimated diameter",
         "9. Closest approach date & distance",
         "14. Asteroids < 1 LD",
         "15. Asteroids < 0.05 AU",
-        "Bonus 3: Top 5 closest approaches"
+        "Bonus 3: Top 5 closest approaches",
     ],
     "📅 Temporal Analysis": [
         "5. Month with most approaches",
-        "8. Closest approach getting nearer over time"
+        "8. Closest approach getting nearer over time",
     ],
     "🌟 Special Queries": [
         "12. Brightest asteroid (lowest magnitude)",
         "Bonus 1: Orbiting bodies (non-Earth)",
-        "Bonus 5: Frequent <1 LD asteroids"
-    ]
+        "Bonus 5: Frequent <1 LD asteroids",
+    ],
 }
 
 selected_query = None
@@ -432,25 +598,38 @@ if selected_query is None:
     selected_query = "1. Count asteroid approaches"
 
 # ----------------------------
-# 9. Show selected query
+# 9. Show selected query (section style)
 # ----------------------------
-st.markdown(f"""
-<div class="query-section">
-    <h2>🔍 {selected_query}</h2>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    f"""
+    <div class="section-heading">
+      <span class="icon">🔍</span>
+      <span>{selected_query}</span>
+    </div>
+    <div class="section-heading-sub">
+      Results and visualizations for the selected NEO query.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 show_query(queries[selected_query])
 
 # ----------------------------
-# 10. Advanced Filters
+# 10. Advanced Filters (modern section heading)
 # ----------------------------
-st.markdown("""
-<div class="filter-section">
-    <h2>🎛️ Advanced Asteroid Approach Filters</h2>
-    <p>Customize your search parameters to find specific asteroid approaches</p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <div class="section-heading">
+      <span class="icon">🎛️</span>
+      <span>Advanced Asteroid Approach Filters</span>
+    </div>
+    <div class="section-heading-sub">
+      Customize your search parameters to find specific asteroid approaches.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 col1, col2 = st.columns(2)
 
@@ -458,11 +637,11 @@ with col1:
     st.subheader("📅 Date & Time Filters")
     selected_date = st.date_input("Select Close Approach Date (after)", datetime(2024, 1, 1))
     st.info("📊 Data Range: January 1, 2024 - December 31, 2024")
-    
+
     st.subheader("🚀 Velocity Filters")
     min_velocity = st.slider("Minimum Relative Velocity (km/h)", 0.0, 100000.0, 0.0, 1000.0)
     max_velocity = st.slider("Maximum Relative Velocity (km/h)", 0.0, 100000.0, 50000.0, 1000.0)
-    
+
     st.subheader("📏 Size Filters")
     min_diameter = st.slider("Minimum Estimated Diameter (km)", 0.0, 50.0, 0.0, 0.1)
     max_diameter = st.slider("Maximum Estimated Diameter (km)", 0.0, 50.0, 5.0, 0.1)
@@ -471,11 +650,11 @@ with col2:
     st.subheader("🌍 Distance Filters (Astronomical Units)")
     min_au = st.slider("Minimum AU", 0.0, 1.0, 0.0, 0.01)
     max_au = st.slider("Maximum AU", 0.0, 1.0, 0.05, 0.01)
-    
+
     st.subheader("🌙 Distance Filters (Lunar Distance)")
     min_ld = st.slider("Minimum LD", 0.0, 100.0, 0.0, 1.0)
     max_ld = st.slider("Maximum LD", 0.0, 100.0, 10.0, 1.0)
-    
+
     st.subheader("⚠️ Hazard Classification")
     hazardous = st.selectbox("Potentially Hazardous?", ["Both", "Yes", "No"])
 
@@ -502,7 +681,7 @@ if hazardous == "Yes":
 elif hazardous == "No":
     filter_query += " AND a.is_potentially_hazardous_asteroid = 0"
 
-st.markdown("### 🎯 Filtered Results")
+st.markdown("#### 🎯 Filtered Results")
 filtered_df = show_query(filter_query, show_chart=False)
 
 if not filtered_df.empty:
@@ -513,15 +692,20 @@ else:
 # ----------------------------
 # 11. Colab launch instructions
 # ----------------------------
-st.markdown("""
----
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 10px; color: white;">
-    <h2>🚀 Launch Instructions for Google Colab</h2>
-    <p>Follow these steps to run this dashboard in Google Colab:</p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    ---
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 2rem; border-radius: 10px; color: white; margin-top: 2rem;">
+        <h2>🚀 Launch Instructions for Google Colab</h2>
+        <p>Follow these steps to run this dashboard in Google Colab:</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-st.code("""
+st.code(
+    """
 # Step 1: Get your external IP (this will be your password)
 !wget -q -O - ipv4.icanhazip.com
 
@@ -530,9 +714,12 @@ st.code("""
 
 # Step 3: Launch the app
 !streamlit run "Nasa_Neo script.py" & npx localtunnel --port 8501
-""", language="bash")
+""",
+    language="bash",
+)
 
-st.markdown("""
+st.markdown(
+    """
 **📋 Then follow these steps:**
 1. ✅ Enter `y` when prompted to proceed  
 2. 🔗 Copy the generated link (e.g., `https://fruity-aliens-unite.loca.lt/`)  
@@ -544,4 +731,5 @@ st.markdown("""
 - Ensure your database is reachable from Colab and credentials are in `st.secrets`  
 - The dashboard works best with a stable internet connection  
 - Use the interactive filters to explore different aspects of asteroid data  
-""")
+"""
+)
