@@ -79,11 +79,11 @@ st.markdown("""
 try:
     def get_connection():
         conn = mysql.connector.connect(
-            host=st.secrets["db_host"],
-            user=st.secrets["db_user"],
-            password=st.secrets["db_password"],
-            database=st.secrets["db_name"],
-            port=st.secrets.get("db_port", 4000),
+            host=st.secrets["host"],
+            user=st.secrets["user"],
+            password=st.secrets["password"],
+            database=st.secrets["name"],
+            port=st.secrets.get("port", 4000),
         )
         return conn
     
