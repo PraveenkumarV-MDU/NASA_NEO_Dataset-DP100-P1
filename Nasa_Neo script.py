@@ -86,7 +86,7 @@ def get_connection():
         user=st.secrets["user"],
         password=st.secrets["password"],
         database=st.secrets["name"],
-        port=st.secrets.get("port", 3306),  # 3306 is MySQL default
+        port=st.secrets.get("port", 4000),  # 3306 is MySQL default tidb port 4000
     )
 
 def run_query(sql, params=None):
