@@ -169,7 +169,7 @@ st.markdown(
         font-size: 0.78rem;
         letter-spacing: .12em;
         text-transform: uppercase;
-        opacity: 0.7;
+        opacity: 1;
         margin-bottom: 0.3rem;
     }
     .metric-value {
@@ -180,7 +180,7 @@ st.markdown(
     .metric-tag {
         margin-top: 0.4rem;
         font-size: 0.78rem;
-        opacity: 0.8;
+        opacity: 1;
     }
 
     /* Section headings */
