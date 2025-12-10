@@ -249,7 +249,7 @@ queries = {
         HAVING COUNT(*) > 3
     ''',
 
-    -- MySQL-friendly month extraction
+    #MySQL-friendly month extraction
     "5. Month with most approaches": '''
         SELECT DATE_FORMAT(close_approach_date, '%Y-%m') AS month, COUNT(*) AS count
         FROM close_approach
