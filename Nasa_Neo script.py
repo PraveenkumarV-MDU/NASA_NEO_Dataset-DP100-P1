@@ -83,7 +83,7 @@ try:
             user=st.secrets["db_user"],
             password=st.secrets["db_password"],
             database=st.secrets["db_name"],
-            port=st.secrets.get("db_port", 3306),
+            port=st.secrets.get("db_port", 4000),
         )
         return conn
     
