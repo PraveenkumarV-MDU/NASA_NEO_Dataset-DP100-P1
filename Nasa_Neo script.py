@@ -741,45 +741,43 @@ else:
 # ----------------------------
 # 11. Colab launch instructions
 # ----------------------------
-"""(
-st.markdown(
-    """
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                padding: 2rem; border-radius: 10px; color: white; margin-top: 2rem;">
-        <h2>🚀 Launch Instructions for Google Colab</h2>
-        <p>Follow these steps to run this dashboard in Google Colab:</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     """
+#     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+#                 padding: 2rem; border-radius: 10px; color: white; margin-top: 2rem;">
+#         <h2>🚀 Launch Instructions for Google Colab</h2>
+#         <p>Follow these steps to run this dashboard in Google Colab:</p>
+#     </div>
+#     """,
+#     unsafe_allow_html=True,
+# )
 
-st.code(
-    """
-# Step 1: Get your external IP (this will be your password)
-!wget -q -O - ipv4.icanhazip.com
+# st.code(
+#     """
+# # Step 1: Get your external IP (this will be your password)
+# !wget -q -O - ipv4.icanhazip.com
 
-# Step 2: Install required packages (if not already installed)
-!pip install streamlit plotly mysql-connector-python
+# # Step 2: Install required packages (if not already installed)
+# !pip install streamlit plotly mysql-connector-python
 
-# Step 3: Launch the app
-!streamlit run "Nasa_Neo script.py" & npx localtunnel --port 8501
-""",
-    language="bash",
-)
+# # Step 3: Launch the app
+# !streamlit run "Nasa_Neo script.py" & npx localtunnel --port 8501
+# """,
+#     language="bash",
+# )
 
-st.markdown(
-    """
-**📋 Then follow these steps:**
-1. ✅ Enter `y` when prompted to proceed  
-2. 🔗 Copy the generated link (e.g., `https://fruity-aliens-unite.loca.lt/`)  
-3. 🌐 Paste it in your browser  
-4. 🔑 Enter the IP address from Step 1 as the password  
-5. 🎉 You'll be redirected to your enhanced Streamlit app!
+# st.markdown(
+#     """
+# **📋 Then follow these steps:**
+# 1. ✅ Enter `y` when prompted to proceed  
+# 2. 🔗 Copy the generated link (e.g., `https://fruity-aliens-unite.loca.lt/`)  
+# 3. 🌐 Paste it in your browser  
+# 4. 🔑 Enter the IP address from Step 1 as the password  
+# 5. 🎉 You'll be redirected to your enhanced Streamlit app!
 
-**💡 Pro Tips:**
-- Ensure your database is reachable from Colab and credentials are in `st.secrets`  
-- The dashboard works best with a stable internet connection  
-- Use the interactive filters to explore different aspects of asteroid data  
-"""
-)
-)"""
+# **💡 Pro Tips:**
+# - Ensure your database is reachable from Colab and credentials are in `st.secrets`  
+# - The dashboard works best with a stable internet connection  
+# - Use the interactive filters to explore different aspects of asteroid data  
+# """
+# )
