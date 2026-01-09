@@ -743,7 +743,6 @@ else:
 # ----------------------------
 """st.markdown(
     """
-    ---
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 padding: 2rem; border-radius: 10px; color: white; margin-top: 2rem;">
         <h2>🚀 Launch Instructions for Google Colab</h2>
